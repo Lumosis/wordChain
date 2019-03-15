@@ -1,4 +1,4 @@
-/***
+ï»¿/***
 2019.3.13
 part 1,2,3 completed and debugged simply.
 output a file "solution.txt" contains the result.
@@ -20,7 +20,7 @@ using namespace std;
 struct TailandLength{
 	int tail;
 	int length;
-};//±£´æµ±Ç°½ÚµãµÄÎ²ºÍ¶ÔÓ¦µ¥´ÊµÄ³¤¶È
+};//ä¿å­˜å½“å‰èŠ‚ç‚¹çš„å°¾å’Œå¯¹åº”å•è¯çš„é•¿åº¦
 
 class wordChain {
 private:
@@ -34,33 +34,33 @@ private:
 	void error(int errorID) {
 
 	}
-	void findLongest(char h, char t) {//ÕÒ³öº¬ÓĞ×î¶àµ¥´ÊÊıµÄÁ´
+	void findLongest(char h, char t) {//æ‰¾å‡ºå«æœ‰æœ€å¤šå•è¯æ•°çš„é“¾
 		if (h != 0) {
 			findLongestH(h - 'a', t - 'a');
 		}
-		else {//Èç¹ûÃ»ÓĞh²ÎÊı£¬Ôò½«Ã¿¸ö×ÖÄ¸×÷ÎªÍ·¶¼ÔËĞĞÒ»±é
+		else {//å¦‚æœæ²¡æœ‰hå‚æ•°ï¼Œåˆ™å°†æ¯ä¸ªå­—æ¯ä½œä¸ºå¤´éƒ½è¿è¡Œä¸€é
 			for (int i = 0; i < 26; i++) {
 				findLongestH(i, t - 'a');
 			}
 		}
 	}
-	void findLongestH(int h, int t) {//¹æ¶¨µ¥´ÊÁ´µÄÍ·Ñ°ÕÒÄ¿±êÁ´
-		//±£³ÖÕ»¶¥Îªµ±Ê±ÕıÔÚ´¦ÀíµÄµ¥´ÊµÄÍ·
+	void findLongestH(int h, int t) {//è§„å®šå•è¯é“¾çš„å¤´å¯»æ‰¾ç›®æ ‡é“¾
+		//ä¿æŒæ ˆé¡¶ä¸ºå½“æ—¶æ­£åœ¨å¤„ç†çš„å•è¯çš„å¤´
 		stack <int> st;
 		st.push(h);
 		int ThisHead;
 		int ThisTail = 0;
 		while (!st.empty()) {
 			ThisHead = st.top();
-			while (ThisTail != 26 && alphaMatrix[ThisHead][ThisTail] == 0) {//Ñ°ÕÒÏÂ¸ö½Úµã
+			while (ThisTail != 26 && alphaMatrix[ThisHead][ThisTail] == 0) {//å¯»æ‰¾ä¸‹ä¸ªèŠ‚ç‚¹
 				ThisTail++;
 			}
 			if (ThisTail == 26) {
-				//ÕÒ²»µ½ÏÂÒ»¸ö½Úµã£¬Ôò´Ë½Úµã´¦ÀíÍê±Ï,³öÕ»,ÅĞ¶ÏÊÇ·ñ¸üĞÂ½á¹û²¢·µ»Ø
+				//æ‰¾ä¸åˆ°ä¸‹ä¸€ä¸ªèŠ‚ç‚¹ï¼Œåˆ™æ­¤èŠ‚ç‚¹å¤„ç†å®Œæ¯•,å‡ºæ ˆ,åˆ¤æ–­æ˜¯å¦æ›´æ–°ç»“æœå¹¶è¿”å›
 				if (st.size() > resultChain.size() && ((t < 0) || (st.top() == t))) {
 					resultChain = st;
 				}
-				if (st.size() == 1){//Èç¹ûÕ»ÖĞÖ»Ê£ÏÂÍ·½Úµã
+				if (st.size() == 1){//å¦‚æœæ ˆä¸­åªå‰©ä¸‹å¤´èŠ‚ç‚¹
 					st.pop();
 				}
 				else{
@@ -69,14 +69,14 @@ private:
 					alphaMatrix[st.top()][ThisTail - 1] += 1;//ThisTail - 1
 				}
 			}
-			else {//ÕÒµ½µÄ½ÚµãÈëÕ»
+			else {//æ‰¾åˆ°çš„èŠ‚ç‚¹å…¥æ ˆ
 				alphaMatrix[ThisHead][ThisTail] -= 1;
 				st.push(ThisTail);
 				ThisTail = 0;
 			}
 		}
 	}
-	void findLargest(char h, char t) {//Ñ°ÕÒ×ÖÄ¸Êı×î¶àµÄÁ´
+	void findLargest(char h, char t) {//å¯»æ‰¾å­—æ¯æ•°æœ€å¤šçš„é“¾
 		if (h != 0) {
 			findLargestH(h - 'a', t - 'a');
 		}
@@ -86,10 +86,10 @@ private:
 			}
 		}
 	}
-	void findLargestH(int h, int t) {//¸ø¶¨Í·Ñ°ÕÒ×ÖÄ¸Êı×î¶àµÄÁ´
-		//ÓÉÓÚĞèÒª¼ÇÂ¼³öÕ»µÄµ¥´ÊµÄ×ÖÄ¸ÊıËùÒÔĞèÒªÊ¹ÓÃ½á¹¹Ìå´úÌæÖ»±£´æ×ÖÄ¸µÄint
-		//ps:¿ÉÒÔÍ¨¹ıalphaMatrixÖĞÊ£Óà±ßÊıÁ¿ÍÆ³öµ¥´Ê´óĞ¡¶ø²»±Ø¶ÔwordSizeMatrix¾ØÕó×öĞŞ¸ÄÒ²²»ĞèÒªÊ¹ÓÃ½á¹¹Ìå¼ÇÂ¼µ¥´Ê³¤¶È
-		//´Ëº¯ÊıÊµÏÖÓ¦ĞŞ¸Ä
+	void findLargestH(int h, int t) {//ç»™å®šå¤´å¯»æ‰¾å­—æ¯æ•°æœ€å¤šçš„é“¾
+		//ç”±äºéœ€è¦è®°å½•å‡ºæ ˆçš„å•è¯çš„å­—æ¯æ•°æ‰€ä»¥éœ€è¦ä½¿ç”¨ç»“æ„ä½“ä»£æ›¿åªä¿å­˜å­—æ¯çš„int
+		//ps:å¯ä»¥é€šè¿‡alphaMatrixä¸­å‰©ä½™è¾¹æ•°é‡æ¨å‡ºå•è¯å¤§å°è€Œä¸å¿…å¯¹wordSizeMatrixçŸ©é˜µåšä¿®æ”¹ä¹Ÿä¸éœ€è¦ä½¿ç”¨ç»“æ„ä½“è®°å½•å•è¯é•¿åº¦
+		//æ­¤å‡½æ•°å®ç°åº”ä¿®æ”¹
 		int sizeTemp;
 		stack <TailandLength> st;
 		TailandLength temp = { h, 0 };
@@ -102,7 +102,7 @@ private:
 				ThisTail.tail++;
 			}
 			if (ThisTail.tail == 26) {
-				//´Ë½Úµã´¦ÀíÍê±Ï,³öÕ»,ÅĞ¶ÏÊÇ·ñ¸üĞÂ½á¹û²¢·µ»Ø
+				//æ­¤èŠ‚ç‚¹å¤„ç†å®Œæ¯•,å‡ºæ ˆ,åˆ¤æ–­æ˜¯å¦æ›´æ–°ç»“æœå¹¶è¿”å›
 				if (currentLength > resultLength && ((t < 0) || (st.top().tail == t))) {
 					resultChainL = st;
 					resultLength = currentLength;
@@ -111,20 +111,20 @@ private:
 					st.pop();
 				}
 				else{
-					ThisTail.tail = st.top().tail + 1;//×¼±¸ÏÂÒ»¸öÒª×ßµÄ±ß
-					currentLength -= st.top().length;//µ±Ç°Â·È¨¼õÈ¥³öÕ»µÄ±ßÈ¨
+					ThisTail.tail = st.top().tail + 1;//å‡†å¤‡ä¸‹ä¸€ä¸ªè¦èµ°çš„è¾¹
+					currentLength -= st.top().length;//å½“å‰è·¯æƒå‡å»å‡ºæ ˆçš„è¾¹æƒ
 					sizeTemp = st.top().length;
-					st.pop();//³öÕ»
-					wordSizeMatrix[st.top().tail][ThisTail.tail - 1].push_back(sizeTemp);//»ØÌî³öÕ»µÄ±ßÈ¨
-					alphaMatrix[st.top().tail][ThisTail.tail - 1] += 1;//½«´Ë±ß¼Ó»ØÈ¥
+					st.pop();//å‡ºæ ˆ
+					wordSizeMatrix[st.top().tail][ThisTail.tail - 1].push_back(sizeTemp);//å›å¡«å‡ºæ ˆçš„è¾¹æƒ
+					alphaMatrix[st.top().tail][ThisTail.tail - 1] += 1;//å°†æ­¤è¾¹åŠ å›å»
 				}
 			}
 			else {
-				alphaMatrix[ThisHead.tail][ThisTail.tail] -= 1;//È¡³öÒ»Ìõ±ß
-				ThisTail.length = *(wordSizeMatrix[ThisHead.tail][ThisTail.tail].end() - 1);//µÃµ½±ßÈ¨
-				wordSizeMatrix[ThisHead.tail][ThisTail.tail].pop_back();//½«±ßÈ¨´ÓÏòÁ¿±íÖĞÉ¾³ı
-				currentLength += ThisTail.length;//µ÷Õûµ±Ç°Â·¾¶±ßÈ¨
-				st.push(ThisTail);//±ßÈëÕ»
+				alphaMatrix[ThisHead.tail][ThisTail.tail] -= 1;//å–å‡ºä¸€æ¡è¾¹
+				ThisTail.length = *(wordSizeMatrix[ThisHead.tail][ThisTail.tail].end() - 1);//å¾—åˆ°è¾¹æƒ
+				wordSizeMatrix[ThisHead.tail][ThisTail.tail].pop_back();//å°†è¾¹æƒä»å‘é‡è¡¨ä¸­åˆ é™¤
+				currentLength += ThisTail.length;//è°ƒæ•´å½“å‰è·¯å¾„è¾¹æƒ
+				st.push(ThisTail);//è¾¹å…¥æ ˆ
 				ThisTail.tail = 0;
 				ThisTail.length = 0;
 			}
@@ -140,7 +140,7 @@ private:
 			}
 		}
 	}
-	void findNumH(int h, int t, int num){//Ö»³õ²½ÊµÏÖËã·¨»¹Î´debug
+	void findNumH(int h, int t, int num){//åªåˆæ­¥å®ç°ç®—æ³•è¿˜æœªdebug
 		stack <int> st;
 		st.push(h);
 		int ThisHead;
@@ -151,7 +151,7 @@ private:
 				ThisTail++;
 			}
 			if (ThisTail == 26) {
-				//´Ë½Úµã´¦ÀíÍê±Ï,³öÕ»,²¢·µ»Ø
+				//æ­¤èŠ‚ç‚¹å¤„ç†å®Œæ¯•,å‡ºæ ˆ,å¹¶è¿”å›
 				ThisTail = st.top() + 1;
 				st.pop();
 				alphaMatrix[st.top()][ThisTail - 1] += 1;
@@ -230,7 +230,7 @@ private:
 		}
 	}
 	void getResultN(Words &wd){
-		//³õ²½Ïë·¨ÊÇ¶ÔÃ¿¸öËÑË÷µ½µÄ×ÖÄ¸´®¶¼µ¥¶À½¨±í´¦Àí
+		//åˆæ­¥æƒ³æ³•æ˜¯å¯¹æ¯ä¸ªæœç´¢åˆ°çš„å­—æ¯ä¸²éƒ½å•ç‹¬å»ºè¡¨å¤„ç†
 	}
 public:
 	wordChain(int argc, char *argv[]) {
@@ -268,10 +268,10 @@ public:
 				error(0);
 			}
 		}
-		//ÕâÀï¼ÓÉÏ²ÎÊı´íÎó´¦Àí
+		//è¿™é‡ŒåŠ ä¸Šå‚æ•°é”™è¯¯å¤„ç†
 		
 		Words wd(filePath);
-		wd.getAlphaMatrix(alphaMatrix);       //×¢£º¸ü¸ÄÔ­Ô¤´¦ÀíÎÄ¼şÖĞµÄº¯ÊıÊ¹µÃÆä¶ÔÊäÈëÊı×é½øĞĞ¸ü¸Ä
+		wd.getAlphaMatrix(alphaMatrix);       //æ³¨ï¼šæ›´æ”¹åŸé¢„å¤„ç†æ–‡ä»¶ä¸­çš„å‡½æ•°ä½¿å¾—å…¶å¯¹è¾“å…¥æ•°ç»„è¿›è¡Œæ›´æ”¹
 		wd.getWordSizeMatrix(wordSizeMatrix);
 		wd.printWordMatrix();
 		if (w) {
@@ -290,7 +290,7 @@ public:
 int main(int argc, char *argv[]) {
 	wordChain wc(argc, argv);
 }
-/*int main(){//²âÊÔÓÃmainº¯Êı,Ê¹ÓÃÊ±Ó¦×¢ÒâĞŞ¸ÄwordChain³õÊ¼»¯º¯ÊıµÄ²ÎÊı
+/*int main(){//æµ‹è¯•ç”¨mainå‡½æ•°,ä½¿ç”¨æ—¶åº”æ³¨æ„ä¿®æ”¹wordChainåˆå§‹åŒ–å‡½æ•°çš„å‚æ•°
 	char p[][20] = { "testfile.txt", "-w", "-t", "j"};
 	wordChain wc(4, p);
 }*/

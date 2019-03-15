@@ -1,4 +1,4 @@
-/***
+ï»¿/***
 2019.3.12 by zhengGei
 ***********
 Demo of profix of document, turns all the words into lowercase, and saves them in the matrix of vector wordMatrix
@@ -28,13 +28,13 @@ private:
 	vector <string> wordMatrix[26][26];
 	vector <int> wordSizeMatrix[26][26];
 	int alphaMatrix[26][26];
-	void insertWord(string wd){//½«µ¥´Ê×ª»»ÎªĞ¡Ğ´²¢°´ÕÕ³¤¶È´ÓĞ¡µ½´óË³Ğò²åÈë
+	void insertWord(string wd){//å°†å•è¯è½¬æ¢ä¸ºå°å†™å¹¶æŒ‰ç…§é•¿åº¦ä»å°åˆ°å¤§é¡ºåºæ’å…¥
 		transform(wd.begin(), wd.end(), wd.begin(), tolower);
 		char a = *(wd.begin()); a -= 'a';
 		char b = *(wd.end() - 1); b -= 'a';
 		alphaMatrix[a][b] += 1;
 		auto endFlag = wordMatrix[a][b].end();
-		if (wordMatrix[a][b].size() == 0){//Èç¹û´ËÏòÁ¿Îª¿Õ
+		if (wordMatrix[a][b].size() == 0){//å¦‚æœæ­¤å‘é‡ä¸ºç©º
 			wordMatrix[a][b].push_back(wd);
 			wordSizeMatrix[a][b].push_back(wd.size());
 		}
@@ -42,7 +42,7 @@ private:
 			auto i = wordMatrix[a][b].begin();
 			auto j = wordSizeMatrix[a][b].begin();
 			bool flag = false;
-			while(i != endFlag){//²åÈë·Ç¿ÕÏòÁ¿
+			while(i != endFlag){//æ’å…¥éç©ºå‘é‡
 				if ((*i).size() > wd.size()){
 					wordMatrix[a][b].insert(i, wd);
 					wordSizeMatrix[a][b].insert(j, wd.size());
@@ -61,7 +61,7 @@ private:
 public:
 	Words(string inputFileName)
 	{
-		for (int i = 0; i < 26; i++){//³õÊ¼»¯¼ÆÊı¾ØÕó
+		for (int i = 0; i < 26; i++){//åˆå§‹åŒ–è®¡æ•°çŸ©é˜µ
 			for (int j = 0; j < 26; j++){
 				alphaMatrix[i][j] = 0;
 			}
@@ -69,7 +69,7 @@ public:
 		ifstream ifile(inputFileName);
 		char ch;
 		string wd = "";
-		//·Ö´Ê²¢µ÷ÓÃinsertWordº¯Êı
+		//åˆ†è¯å¹¶è°ƒç”¨insertWordå‡½æ•°
 		ifile.get(ch);
 		while (!isalpha(ch)){
 			ifile.get(ch);
@@ -86,12 +86,12 @@ public:
 			wd = "";
 		}
 	}
-	void getAlphaMatrix(int a[26][26]){//½«×ÖÄ¸¾ØÕó¿½±´µ½Ä¿±êÎ»ÖÃ
+	void getAlphaMatrix(int a[26][26]){//å°†å­—æ¯çŸ©é˜µæ‹·è´åˆ°ç›®æ ‡ä½ç½®
 		for (int i = 0; i < 26; i++){
 			memcpy(a[i], alphaMatrix[i], 26 * sizeof(int));
 		}
 	}
-	void getWordSizeMatrix(vector<int> a[26][26]){//¿½±´µ¥´Ê³¤¶È¾ØÕó
+	void getWordSizeMatrix(vector<int> a[26][26]){//æ‹·è´å•è¯é•¿åº¦çŸ©é˜µ
 		for (int i = 0; i < 26; i++){
 			for (int j = 0; j < 26; j++){
 				a[i][j] = wordSizeMatrix[i][j];
@@ -101,7 +101,7 @@ public:
 	string getWord(int h, int t, int n){
 		return wordMatrix[h][t][n];
 	}
-	void printWordMatrix(){//Êä³ö¶ÁÈ¡½á¹ûÒÔ¹©²âÊÔ
+	void printWordMatrix(){//è¾“å‡ºè¯»å–ç»“æœä»¥ä¾›æµ‹è¯•
 		for (int i = 0; i < 26; i++){
 			for (int j = 0; j < 26; j++){
 				cout << (char)(i + 'a') << " " << (char)(j + 'a') << ": ";
