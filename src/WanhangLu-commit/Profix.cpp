@@ -28,6 +28,7 @@ private:
 	vector <string> wordMatrix[26][26];  //用于保存字符串的向量矩阵，[i][j]中表示从i开始j结束的所有单词组成的向量
 	vector <int> wordSizeMatrix[26][26]; //用于保存单词长的向量矩阵，[i][j]中表示从i开始j结束的所有单词长度的向量
 	int alphaMatrix[26][26];
+	int total_word_num;
 	void insertWord(string wd){//将单词转换为小写并按照长度从小到大顺序插入
 		transform(wd.begin(), wd.end(), wd.begin(), tolower);
 		char a = *(wd.begin()); a -= 'a';    //a表示头部
@@ -35,6 +36,7 @@ private:
 		//alphaMatrix[a][b] += 1;    			 //此时矩阵中对应位置加一
 		auto endFlag = wordMatrix[a][b].end();
 		if (wordMatrix[a][b].size() == 0){  //如果此向量为空
+			total_word_num ++;
 			wordMatrix[a][b].push_back(wd); 
 			wordSizeMatrix[a][b].push_back(wd.size());
 			alphaMatrix[a][b] += 1;    			 //此时矩阵中对应位置加一
@@ -46,6 +48,7 @@ private:
 			while(i != endFlag){//从头扫描到尾
 				if ((*i).size() > wd.size()) //找到了合适的插入位置了
 				{
+					total_word_num++;
 					wordMatrix[a][b].insert(i, wd);  //在对应的位置插入
 					wordSizeMatrix[a][b].insert(j, wd.size());
 					alphaMatrix[a][b] += 1;    			 //此时矩阵中对应位置加一
@@ -54,9 +57,9 @@ private:
 				}
 				else
 				{
-					if ((*i).size() == wd.size())
-					{
-						string temp_str = *i;
+					if ((*i).size() == wd.size())   //这里试着进行了重复单词的检测工作。
+					{								//当两个单词长度一致并且首尾字母相同，则有着出现重复单词的风险。
+						string temp_str = *i;		
 						cout<<temp_str<<endl;
 						cout<<wd<<endl;
 						if (*i == wd) 
@@ -71,6 +74,7 @@ private:
 			}
 			if (!flag)  //如果flag为假，表示这个时候还没有插入，直到循环结束仍然不满足要求，证明是最短的
 			{
+				total_word_num++;
 				wordMatrix[a][b].push_back(wd);	
 				wordSizeMatrix[a][b].push_back(wd.size());
 				alphaMatrix[a][b] += 1;    			 //此时矩阵中对应位置加一
@@ -80,6 +84,7 @@ private:
 public:
 	Words(string inputFileName)  
 	{
+		total_word_num = 0;
 		for (int i = 0; i < 26; i++){	//初始化计数矩阵
 			for (int j = 0; j < 26; j++){
 				alphaMatrix[i][j] = 0;
@@ -101,6 +106,7 @@ public:
 			}
 			if (wd.size() != 0){
 				//cout<<wd<<endl;
+				//total_word_num ++ ;
 				insertWord(wd);
 			}
 			if (!ifile.eof())
@@ -108,6 +114,11 @@ public:
 			wd = "";
 		}
 		//cout<<"fuck"<<endl;
+	}
+
+	int get_word_num()
+	{
+		return total_word_num;
 	}
 
 	string deleteword(int h, int t, int n)

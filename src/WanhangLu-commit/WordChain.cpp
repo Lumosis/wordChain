@@ -24,7 +24,7 @@ private:
 	stack <int> resultChain;  //保存的是按照单词最多取的单词链
 	stack <TailandLength> resultChainL;	//按照字符最多取的单词链
 	vector <stack <int>> resultChainN;  //这里存放的是所有满足条件的链
-	vector <vector<string>> num_result;
+	//vector <vector<string>> num_result;
 	int currentLength;
 	int resultLength;
 	int num_count;
@@ -148,11 +148,18 @@ private:
 
 		if (result.size()==1) //此时栈中只剩下一个元素，无法构成单词
 		{
-			num_result.push_back(answer);
-			/*for (int m=0;m < answer.size();m++)
+			//num_result.push_back(answer);
+			ofstream ofile;
+			ofile.open("solution_temp.txt",ios::app);
+			for (int m=0;m < answer.size();m++)
+			{
 				cout<<answer[m]<<endl;
-			cout<<""<<endl;*/
+				ofile << answer[m] << endl;
+			}
+			ofile << ""<< endl;
+			cout << "" << endl;
 			num_count++;
+			ofile.close();
 			return;
 		}
 		//接下来，逐层检查每一种的可能性，并且将可能性累加。
@@ -210,7 +217,6 @@ private:
 				if (st.size() - 1 == num) {//如果栈的深度已经达到目标要求
 					if (t < 0 || st.top() == t) 
 					{
-						
 						stack <int> tempst = st;
 						stack <int> reversed_result;	//result中的是反序，这里要把数据正过来放
 						while(!tempst.empty())
@@ -218,7 +224,9 @@ private:
 							reversed_result.push(tempst.top());
 							tempst.pop();
 						}
-						resultChainN.push_back(reversed_result);
+						//resultChainN.push_back(reversed_result);
+						vector <string> answer;
+						getResultN(wd,reversed_result,answer);
 					}
 					st.pop();
 					alphaMatrix[ThisHead][ThisTail] += 1;
@@ -266,6 +274,7 @@ private:
 		for (auto i : Result) {
 			ofile << i << " ";
 		}
+		ofile.close();
 	}
 	void getResultL(Words &wd) {
 		stack <int> temp;
@@ -294,14 +303,19 @@ private:
 		for (auto i : Result) {
 			ofile << i << " ";
 		}
+		ofile.close();
 	}
 public:
 	
 	wordChain(int argc, char *argv[]) {    //读入不同的参数，并且调用对应的函数
 		bool w = false, c = false, n = false;
+		bool error_flag = false;
+		bool file_error_flag = false;
 		char h = 0, t = 0;
 		int num = 0;
-		string filePath(argv[argc-1]);   //第一个参数表示文件路径
+		int len;
+		int total_word_num = 0;
+		string filePath(argv[argc-1]);   //最后一个参数表示文件路径
 		for (int i = 1; i < argc-1;) {
 			if (argv[i][0] != '-') { //如果第一个字符不是'-' 出错
 				error(0);
@@ -317,53 +331,181 @@ public:
 				break;
 			case 'n':
 				n = true;
-				num = atoi(argv[i + 1]);  //得到递归深度
+				//这里还需要检查下面的字符串中是否全部都是数字
+				len = string(argv[i + 1]).size();
+				for (int k = 0; k < len; k++)
+				{
+					if (k == 0 && argv[i + 1][k] == '+') continue; //该情况合法
+					if (argv[i + 1][k] > '9' || argv[i + 1][k] < '0')
+					{
+						error_flag = true;
+						cout << "递归深度输入有误，有无法识别的字符" << endl;
+						error(0);
+					}
+				}
+				if (error_flag == false)
+				{
+					num = atoi(argv[i + 1]);  //得到递归深度
+					if (num <= 0) //虽然估计没人这么作死但是还是写一下吧
+					{
+						error_flag = true;
+						cout << "单词链长度（递归深度）必须是正数！" << endl;
+						error(0);
+					}
+				}
 				i += 2;
 				break;
-			case 'h':
+			case 'h':				//这里还需要检查一下长度的问题，如果说后面跟着的单词数目超过两个，则是非法表示
+				//cout << argv[i+1] << "/   /" <<  string(argv[i+1]).size()<< endl;
+				if (string(argv[i + 1]).size() > 1)
+				{
+					cout << "单词链开始字母不符合要求，请输入单个字母！" << endl;
+					error_flag = true;
+					error(0);
+				}
+				if (!isalpha(argv[i + 1][0]))
+				{
+					cout << "单词链开始字母非法！" << endl;
+					error_flag = true;
+					error(0);
+				}
 				h = argv[i + 1][0];       //得到头部字符
 				i += 2;
 				break;
 			case 't':
+				//cout << argv[i+1] << "   " << string(argv[i + 1]).size() << endl;
+				if (string(argv[i + 1]).size() > 1)
+				{
+					cout << "单词链结束字母不符合要求，请输入单个字母！" << endl;
+					error_flag = true;
+					error(0);
+				}
+				if (!isalpha(argv[i + 1][0]))
+				{
+					cout << "单词链结束字母非法！" << endl;
+					error_flag = true;
+					error(0);
+				}
 				t = argv[i + 1][0];       //得到尾部字符
 				i += 2;
 				break;
 			default:
+				error_flag = true;
 				error(0);
 			}
 		}
 		//这里加上参数错误处理
 		cout << n << "  "<< num << endl;
-		Words wd(filePath);						//新建一个Words类，读取文件中的数据并建立起Words类中的内容
-		//cout<<"here"<<endl;
-		wd.getAlphaMatrix(alphaMatrix);          //注：更改原预处理文件中的函数使得其对输入数组进行更改
-		for (int m=0; m<26;m++)
+
+		/***在导入filePath之前，先检验该文件是否存在以及是否为空****/
+		ifstream check_file(filePath);
+		if (check_file)
 		{
-			for (int n=0;n<26;n++)
-				copied_alpha[m][n] = alphaMatrix[m][n];
-		}
-		wd.getWordSizeMatrix(wordSizeMatrix);
-		wd.printWordMatrix();
-		//printmatrix();
-		if (w) {					//如果w不为空，则找最多单词数量的单词链
-			findLongest(h, t);
-			getResult(wd);
-		}
-		else if (c) { 				//找字母最多的单词链
-			findLargest(h, t);
-			getResultL(wd);
-		}
-		else {
-			//cout<<"here"<<endl;
-			num_count = 0;
-			findNum(wd,h, t, num);		//找的是num数据中的单词链
-			PrintResultn(wd);
-			cout<<num_count<<endl;
-			for (int i =0; i< num_result.size();i++)
+			char c;
+			check_file >> c;
+			if (check_file.eof())
 			{
-				for (int j=0; j< num_result[i].size();j++)
-					cout<<num_result[i][j]<<endl;
-				cout<<endl;
+				cout << "该文件为空！" << endl;
+				file_error_flag = true;
+				error(0);
+			}
+		}
+		else
+		{
+			cout << "文件不存在！"<< endl;
+			file_error_flag = true;
+			error(0);
+		}
+		/********文件检验完成*******/
+		if (file_error_flag == false)
+		{
+			Words wd(filePath);						//新建一个Words类，读取文件中的数据并建立起Words类中的内容
+			wd.getAlphaMatrix(alphaMatrix);          //注：更改原预处理文件中的函数使得其对输入数组进行更改
+			for (int m=0; m<26;m++)
+			{
+				for (int n=0;n<26;n++)
+					copied_alpha[m][n] = alphaMatrix[m][n];
+			}
+			wd.getWordSizeMatrix(wordSizeMatrix);
+			//wd.printWordMatrix();
+
+			/********检验各种参数之间的冲突性********/
+			total_word_num = wd.get_word_num();
+			cout<< total_word_num << endl;
+			if (total_word_num == 0)
+			{
+				cout<<"该文档中没有合法单词，请重新选择文件！"<<endl;
+				error_flag = true;
+				error(0);
+			}
+			if (n &&(w|c)||(w&&c))  //最后一个需求和前两个冲突，或者前两个需求冲突
+			{
+				if (w == true)
+				{
+					cout << "命令出现冲突，以w(最多单词数)为准"<< endl;
+					n = false;
+					c = false;
+				}
+				else
+				{
+					cout << "命令出现冲突，以c(最多字母数)为准"<< endl;
+					n = false;
+				}
+			}
+			if (n && (total_word_num < num))
+			{
+				cout<<"单词链过长，超过单词总数！"<<endl;
+				error_flag = true;
+				error(0);
+			}
+			/*******参数检验完成*******/
+			//printmatrix();
+			/**********如果之前没有错误，开始DFS*************/
+			if (error_flag == false)	//这里的优先级是w，c，n，因此上面进行了对应的说明
+			{
+				if (w) {					//如果w不为空，则找最多单词数量的单词链
+					findLongest(h, t);
+					getResult(wd);
+				}
+				else if (c) { 				//找字母最多的单词链
+					findLargest(h, t);
+					getResultL(wd);
+				}
+				else {
+					num_count = 0;
+					findNum(wd,h, t, num);		//找的是num数据中的单词链
+					//PrintResultn(wd);
+					cout<<num_count<<endl;
+					ofstream ofile("solution.txt");
+					ifstream infile("solution_temp.txt");
+					ofile << num_count<<endl;
+					ofile << "" <<endl;
+					string line;
+					if(infile) // 有该文件
+					{
+						while (getline (infile, line)) // line中不包括每行的换行符
+						ofile << line << endl;
+					}
+					else // 没有该文件
+						cout <<"no such file" << endl;
+					ofile.close();
+					infile.close();
+					remove("solution_temp.txt");
+					//这里被注释掉的是另一种方法，将所有结果保存起来之后统一输出，但是担心复杂度爆炸因此使用了上面的迂回策略
+					/*for (int i =0; i< num_result.size();i++)
+					{
+						for (int j=0; j< num_result[i].size();j++)
+							cout<<num_result[i][j]<<endl;
+						cout<<endl;
+					}*/
+				}
+				cout << "" << endl;
+				cout << "程序执行完成，结果输出在solution.txt文件中，请到对应目录下查看"<<endl;
+			}
+			else
+			{
+				cout << "" << endl;
+				cout << "程序未能正常执行，请查看错误信息后修正输入"<<endl; 
 			}
 		}
 	}
