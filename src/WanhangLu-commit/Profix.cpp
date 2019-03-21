@@ -30,7 +30,7 @@ private:
 	int alphaMatrix[26][26];
 	int total_word_num;
 	void insertWord(string wd){//将单词转换为小写并按照长度从小到大顺序插入
-		transform(wd.begin(), wd.end(), wd.begin(), tolower);
+		transform(wd.begin(), wd.end(), wd.begin(), ::tolower);
 		char a = *(wd.begin()); a -= 'a';    //a表示头部
 		char b = *(wd.end() - 1); b -= 'a';  //b表示尾部
 		//alphaMatrix[a][b] += 1;    			 //此时矩阵中对应位置加一
@@ -60,8 +60,8 @@ private:
 					if ((*i).size() == wd.size())   //这里试着进行了重复单词的检测工作。
 					{								//当两个单词长度一致并且首尾字母相同，则有着出现重复单词的风险。
 						string temp_str = *i;		
-						cout<<temp_str<<endl;
-						cout<<wd<<endl;
+						//cout<<temp_str<<endl;
+						//cout<<wd<<endl;
 						if (*i == wd) 
 						{
 							flag = true;

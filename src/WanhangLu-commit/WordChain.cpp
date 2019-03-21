@@ -5,11 +5,18 @@
 
 #include <iostream>
 #include <string>
+#include<string.h>
 #include <vector>
 #include <fstream>
 #include <stack>
 #include "Profix.cpp"  //这里使用了profix中定义的类
 using namespace std;
+
+extern "C"{
+
+    int test(int, char *[]);
+
+}
 
 struct TailandLength {
 	int tail;
@@ -395,7 +402,7 @@ public:
 			}
 		}
 		//这里加上参数错误处理
-		cout << n << "  "<< num << endl;
+		//cout << n << "  "<< num << endl;
 
 		/***在导入filePath之前，先检验该文件是否存在以及是否为空****/
 		ifstream check_file(filePath);
@@ -431,7 +438,7 @@ public:
 
 			/********检验各种参数之间的冲突性********/
 			total_word_num = wd.get_word_num();
-			cout<< total_word_num << endl;
+			//cout<< total_word_num << endl;
 			if (total_word_num == 0)
 			{
 				cout<<"该文档中没有合法单词，请重新选择文件！"<<endl;
@@ -510,10 +517,15 @@ public:
 		}
 	}
 };
-int main(int argc, char *argv[]) {
-	cout << argv[0] << endl;
+
+int test(int argc, char *argv[]) {
+	//cout << argv[0] << endl;
+	cout << argc << endl;
+	cout << *argv << endl;
+
 	wordChain wc(argc, argv);
 }
+
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
 // 调试程序: F5 或调试 >“开始调试”菜单
 

@@ -20,6 +20,7 @@ error handling not completed
 #include <algorithm>
 #include <string>
 #include <cctype>
+#include<ctype.h>
 using namespace std;
 
 class Words
@@ -29,7 +30,7 @@ private:
 	vector <int> wordSizeMatrix[26][26];
 	int alphaMatrix[26][26];
 	void insertWord(string wd){//将单词转换为小写并按照长度从小到大顺序插入
-		transform(wd.begin(), wd.end(), wd.begin(), tolower);
+		transform(wd.begin(), wd.end(), wd.begin(), ::tolower);
 		char a = *(wd.begin()); a -= 'a';
 		char b = *(wd.end() - 1); b -= 'a';
 		alphaMatrix[a][b] += 1;
