@@ -28,6 +28,8 @@ def start():
         if e3.get() == '':
             error_flag = True
             error_msg.set('Lack parameter')
+    else:
+        argv = argv + ' -w'
 
     if var1.get() == 1:
         argv = argv + ' -h '
@@ -147,7 +149,8 @@ t1.place(x=90,y=40,anchor=NW)
 t2 = Text(window,height=17,width=35)
 t2.place(x=90,y=350,anchor=NW)
 
-
+with open('solution.txt','w') as f:
+    f.write('')
 
 
 
