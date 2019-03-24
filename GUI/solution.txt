@@ -1,2 +1,0 @@
-The longest word chain has 1word(s): 
-adsc 

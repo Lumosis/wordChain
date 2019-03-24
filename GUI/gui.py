@@ -1,6 +1,6 @@
 from tkinter import *
 from ctypes import *
-
+import re
 
 window = Tk()
 window.title('Word Chain')
@@ -14,6 +14,16 @@ error_msg.set('No error')
 error = Label(window,textvariable=error_msg,width=15,height=2,bg="white"\
                 ,font=('Red',12))
 error.place(x=350,y=25,anchor=NW)
+my_re = re.compile(r'[A-Za-z]')
+
+
+def islegal(content):
+    content=list(content)
+    for item in content:
+        if item.isalpha():
+            return True
+    return False;
+
 def start():
     argv = './wc'
     error_flag = False;
@@ -28,6 +38,9 @@ def start():
         if e3.get() == '':
             error_flag = True
             error_msg.set('Lack parameter')
+        if e3.get().isdigit() == False:
+            error_flag = True
+            error_msg.set('parameter error')
     else:
         argv = argv + ' -w'
 
@@ -37,6 +50,10 @@ def start():
         if e4.get() == '':
             error_flag = True
             error_msg.set('Lack parameter')
+        if len(e4.get())!=1 or e4.get().isalpha() == False:
+            print(e4.get(),len(e4.get()), e4.get().isalpha())
+            error_flag = True
+            error_msg.set('parameter error')
 
     if var2.get() == 1:
         argv = argv + ' -t '
@@ -44,11 +61,19 @@ def start():
         if e5.get() == '':
             error_flag = True
             error_msg.set('Lack parameter')
+        if len(e5.get())!=1 or e5.get().isalpha() == False:
+            error_flag = True
+            error_msg.set('parameter error')
 
     if v1.get() == 'A':
         argv = argv + ' ' + e1.get()
         try:
-            open(e1.get(),'r')
+            f = open(e1.get(),'r')
+            content = f.read()
+            if islegal(content)==False:
+                error_flag = True
+                error_msg.set('in_file illegal')
+
         except:
             error_flag = True
             error_msg.set('in_file not exist')
@@ -57,6 +82,9 @@ def start():
             if t1.get('1.0',END) == '':
                 error_flag = True
                 error_msg.set('Lack input')
+            if islegal(t1.get('1.0',END))==False:
+                error_flag = True
+                error_msg.set('input illegal')
             f.write(t1.get('1.0',END))
         argv = argv + ' temp_in.txt'
 
@@ -68,6 +96,7 @@ def start():
         i=0
         arr = char_p_arr(*argv)
         libc.test(len(argv),pointer(arr))
+
     else:
         pass
 
@@ -80,6 +109,10 @@ def start():
         with open('solution.txt','r') as s:
             t2.delete('1.0',END)
             t2.insert(END,s.read())
+    else:
+        error_msg.set('where to output')
+    with open('solution.txt','w') as f:
+        f.write('')
 
 
 
