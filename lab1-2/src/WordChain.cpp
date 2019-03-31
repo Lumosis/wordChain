@@ -474,14 +474,20 @@ public:
 			if (error_flag == false)	//这里的优先级是w，c，n，因此上面进行了对应的说明
 			{
 				if (w) {					//如果w不为空，则找最多单词数量的单词链
+					W_or_C_Type = true;
+					N_Type = false;
 					findLongest(h, t);
 					getResult(wd);
 				}
-				else if (c) { 				//找字母最多的单词链
+				else if (c) {              //找字母最多的单词链
+					W_or_C_Type = true;
+					N_Type = false;
 					findLargest(h, t);
 					getResultL(wd);
 				}
 				else {
+					W_or_C_Type = false;
+					N_Type = true;
 					num_count = 0;
 					findNum(wd,h, t, num);		//找的是num数据中的单词链
 					//PrintResultn(wd);
@@ -673,7 +679,7 @@ public:
 }*/
 
 int main(){
-	vector<string> inputString = { "ABC", "CDE", "ED0AOF", "FEIKFOSAEI", "IAWRUGH" };
+	vector<string> inputString = { "ABC", "CDE", "EDAOF", "FEIKFOSAEI", "IAWRUGH" };
 	/**wordChain wc(inputString, 5, 2, 0, 0, 'n');
 	auto p = wc.getChains();
 	for (auto i : p){
