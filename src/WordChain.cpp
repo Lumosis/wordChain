@@ -10,6 +10,7 @@
 #include <fstream>
 #include <stack>
 #include "Profix.cpp"  //这里使用了profix中定义的类
+#include <sstream>
 using namespace std;
 
 extern "C"{
@@ -25,12 +26,14 @@ struct TailandLength {
 
 class wordChain {
 private:
+	bool W_or_C_Type, N_Type;
 	int alphaMatrix[26][26];
 	int copied_alpha[26][26];//用于保存副本，因为在递归的时候，尽管出了结果，但是计数矩阵没有被完全复原
 	vector <int> wordSizeMatrix[26][26];
 	stack <int> resultChain;  //保存的是按照单词最多取的单词链
 	stack <TailandLength> resultChainL;	//按照字符最多取的单词链
 	vector <stack <int>> resultChainN;  //这里存放的是所有满足条件的链
+	vector <string> Result;
 	//vector <vector<string>> num_result;
 	int currentLength;
 	int resultLength;
@@ -256,8 +259,8 @@ private:
 	}
 	void getResult(Words &wd) {
 		stack <int> temp;
-		vector <string> Result;
 		int head, tail;
+		Result.clear();
 		while (!resultChain.empty()) {
 			temp.push(resultChain.top());
 			resultChain.pop();
@@ -285,8 +288,8 @@ private:
 	}
 	void getResultL(Words &wd) {
 		stack <int> temp;
-		vector <string> Result;
 		int head, tail;
+		Result.clear();
 		while (!resultChainL.empty()) {
 			temp.push(resultChainL.top().tail);
 			resultChainL.pop();
@@ -516,14 +519,129 @@ public:
 			}
 		}
 	}
+	wordChain(vector<string> inputString, int len, char h, char t, char type){//测试所用函数接口
+		W_or_C_Type = true;
+		N_Type = false;
+		Words wd(inputString, len);
+		wd.getAlphaMatrix(alphaMatrix);
+		for (int m = 0; m<26; m++)
+		{
+			for (int n = 0; n<26; n++)
+				copied_alpha[m][n] = alphaMatrix[m][n];
+		}
+		wd.getWordSizeMatrix(wordSizeMatrix);
+		if (type == 'w'){
+			findLongest(h, t);
+			getResult(wd);
+		}
+		else if (type == 'c'){
+			findLargest(h, t);
+			getResultL(wd);
+		}
+		else{
+			cout << "parameter error!" << endl;
+		}
+	}
+	wordChain(vector<string> inputString, int len, int num, char h, char t){
+		W_or_C_Type = false;
+		N_Type = true;
+		Words wd(inputString, len);
+		wd.getAlphaMatrix(alphaMatrix);
+		for (int m = 0; m<26; m++)
+		{
+			for (int n = 0; n<26; n++)
+				copied_alpha[m][n] = alphaMatrix[m][n];
+		}
+		wd.getWordSizeMatrix(wordSizeMatrix);
+		num_count = 0;
+		findNum(wd, h, t, num);		//找的是num数据中的单词链
+		ofstream ofile("solution.txt");
+		ifstream infile("solution_temp.txt");
+		ofile << num_count << endl;
+		ofile << "" << endl;
+		string line;
+		if (infile) // 有该文件
+		{
+			while (getline(infile, line)) // line中不包括每行的换行符
+				ofile << line << endl;
+		}
+		else // 没有该文件
+			cout << "no such file" << endl;
+		ofile.close();
+		infile.close();
+		remove("solution_temp.txt");
+		//PrintResultn(wd);
+		cout << num_count << endl;
+	}
+	vector<string> getChain(){
+		if (!W_or_C_Type){
+			cout << "parameter error" << endl;
+			return{};
+		}
+		return Result;
+	}
+	int getLen(){
+		if (!W_or_C_Type){
+			cout << "parameter error" << endl;
+			return 0;
+		}
+		return Result.size();
+	}
+	vector<vector<string>>getChains(){
+		if (!N_Type){
+			cout << "parameter error" << endl;
+			return{};
+		}
+		ifstream infile("solution.txt");
+		vector<vector<string>> ResultN;
+		int num;
+		string line = "";
+		infile >> num;
+		getline(infile, line);
+		getline(infile, line);
+		ResultN.push_back({});
+		while (getline(infile, line) && num > 0){
+			if (line == ""){
+				ResultN.push_back({});
+				num--;
+				continue;
+			}
+			auto iter = ResultN.end() - 1;
+			(*iter).push_back(line);
+		}
+		return ResultN;
+	}
+	int getNum(){
+		if (!N_Type){
+			cout << "parameter error" << endl;
+			return 0;
+		}
+		ifstream infile("solution.txt");
+		int num;
+		infile >> num;
+		return num;
+	}
 };
 
-int test(int argc, char *argv[]) {
+/*int test(int argc, char *argv[]) {
 	//cout << argv[0] << endl;
 	cout << argc << endl;
 	cout << *argv << endl;
 
 	wordChain wc(argc, argv);
+}*/
+
+int main(){
+	vector<string> inputString = { "ABC", "CDE", "EDAOF", "FEIKFOSAEI", "IAWRUGH" };
+	wordChain wc(inputString, 5, 2, 0, 0);
+	auto p = wc.getChains();
+	for (auto i : p){
+		cout << endl;
+		for (auto m : i){
+			cout << m << " ";
+		}
+	}
+	system("pause");
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
@@ -536,3 +654,17 @@ int test(int argc, char *argv[]) {
 //   4. 使用错误列表窗口查看错误
 //   5. 转到“项目”>“添加新项”以创建新的代码文件，或转到“项目”>“添加现有项”以将现有代码文件添加到项目
 //   6. 将来，若要再次打开此项目，请转到“文件”>“打开”>“项目”并选择 .sln 文件
+
+/**************
+使用方法:
+初始化函数有三种：
+wordChain(int argc, char *argv[])    将参数以命令行参数的形式直接传入初始化函数，并计算得到相应结果
+wordChain(vector<string> inputString, int len, char h, char t, char type)   针对寻找最长单词链和最多字母单词链
+wordChain(vector<string> inputString, int len, int num, char h, char t) 针对寻找定长单词链
+*****若使用后两种方法进行初始化需调用者自己保证传入的inputstring中单词均为合法的大写单词*****
+vector<string> getChain() 得到w或c参数下的结果
+int getLen() 得到w或者c参数下的结果长度
+vector<vector<string>>getChains() 得到n参数下的结果
+int getNum() 得到n参数下的单词链数量
+
+***************/

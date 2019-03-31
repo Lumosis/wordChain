@@ -523,6 +523,13 @@ public:
 		W_or_C_Type = true;
 		N_Type = false;
 		Words wd(inputString, len);
+		wd.getAlphaMatrix(alphaMatrix);
+		for (int m = 0; m<26; m++)
+		{
+			for (int n = 0; n<26; n++)
+				copied_alpha[m][n] = alphaMatrix[m][n];
+		}
+		wd.getWordSizeMatrix(wordSizeMatrix);
 		if (type == 'w'){
 			findLongest(h, t);
 			getResult(wd);
@@ -535,12 +542,34 @@ public:
 			cout << "parameter error!" << endl;
 		}
 	}
-	wordChain(vector<string> inputString, int len, int num, char h, char t){
+	wordChain(vector<string> inputString, int len, int num, char h, char t, char type){
 		W_or_C_Type = false;
 		N_Type = true;
 		Words wd(inputString, len);
+		wd.getAlphaMatrix(alphaMatrix);
+		for (int m = 0; m<26; m++)
+		{
+			for (int n = 0; n<26; n++)
+				copied_alpha[m][n] = alphaMatrix[m][n];
+		}
+		wd.getWordSizeMatrix(wordSizeMatrix);
 		num_count = 0;
 		findNum(wd, h, t, num);		//找的是num数据中的单词链
+		ofstream ofile("solution.txt");
+		ifstream infile("solution_temp.txt");
+		ofile << num_count << endl;
+		ofile << "" << endl;
+		string line;
+		if (infile) // 有该文件
+		{
+			while (getline(infile, line)) // line中不包括每行的换行符
+				ofile << line << endl;
+		}
+		else // 没有该文件
+			cout << "no such file" << endl;
+		ofile.close();
+		infile.close();
+		remove("solution_temp.txt");
 		//PrintResultn(wd);
 		cout << num_count << endl;
 	}
@@ -566,19 +595,21 @@ public:
 		ifstream infile("solution.txt");
 		vector<vector<string>> ResultN;
 		int num;
-		string temp;
 		string line = "";
 		infile >> num;
+		getline(infile, line);
+		getline(infile, line);
+		ResultN.push_back({});
 		while (getline(infile, line) && num > 0){
-			if (line == "")continue;
-			stringstream ss(line);
-			ResultN.push_back({});
-			auto iter = ResultN.end() - 1;
-			while (ss >> temp){
-				(*iter).push_back(temp);
+			if (line == ""){
+				ResultN.push_back({});
+				num--;
+				continue;
 			}
-			num--;
+			auto iter = ResultN.end() - 1;
+			(*iter).push_back(line);
 		}
+		return ResultN;
 	}
 	int getNum(){
 		if (!N_Type){
@@ -602,7 +633,20 @@ public:
 
 int main(){
 	vector<string> inputString = { "ABC", "CDE", "EDAOF", "FEIKFOSAEI", "IAWRUGH" };
-	wordChain wc(inputString, 5, 2, 0, 0);
+	/**wordChain wc(inputString, 5, 2, 0, 0, 'n');
+	auto p = wc.getChains();
+	for (auto i : p){
+		cout << endl;
+		for (auto m : i){
+			cout << m << " ";
+		}
+	}**/
+	wordChain wc(inputString, 5, 0, 0, 'w');
+	auto p = wc.getChain();
+	for (auto i : p){
+		cout << i << " ";
+	}
+	system("pause");
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
@@ -621,7 +665,7 @@ int main(){
 初始化函数有三种：
 wordChain(int argc, char *argv[])    将参数以命令行参数的形式直接传入初始化函数，并计算得到相应结果
 wordChain(vector<string> inputString, int len, char h, char t, char type)   针对寻找最长单词链和最多字母单词链
-wordChain(vector<string> inputString, int len, int num, char h, char t) 针对寻找定长单词链
+wordChain(vector<string> inputString, int len, int num, char h, char t, char type) 针对寻找定长单词链
 *****若使用后两种方法进行初始化需调用者自己保证传入的inputstring中单词均为合法的大写单词*****
 vector<string> getChain() 得到w或c参数下的结果
 int getLen() 得到w或者c参数下的结果长度
