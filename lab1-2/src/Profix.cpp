@@ -115,6 +115,19 @@ public:
 		}
 		//cout<<"fuck"<<endl;
 	}
+	Words(vector<string> inputWords, int len){//这里假设测试用样例没有非法单词
+		total_word_num = 0;
+		for (int i = 0; i < 26; i++){	//初始化计数矩阵
+			for (int j = 0; j < 26; j++){
+				alphaMatrix[i][j] = 0;
+			}
+		}
+		string wd = "";
+		for (int i = 0; i < len; i++){
+			wd = inputWords[i];
+			insertWord(wd);
+		}
+	}
 
 	int get_word_num()
 	{
