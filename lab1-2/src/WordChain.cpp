@@ -535,7 +535,7 @@ public:
 			cout << "parameter error!" << endl;
 		}
 	}
-	wordChain(vector<string> inputString, int len, int num, char h, char t, char type){
+	wordChain(vector<string> inputString, int len, int num, char h, char t){
 		W_or_C_Type = false;
 		N_Type = true;
 		Words wd(inputString, len);
@@ -592,12 +592,17 @@ public:
 	}
 };
 
-int test(int argc, char *argv[]) {
+/*int test(int argc, char *argv[]) {
 	//cout << argv[0] << endl;
 	cout << argc << endl;
 	cout << *argv << endl;
 
 	wordChain wc(argc, argv);
+}*/
+
+int main(){
+	vector<string> inputString = { "ABC", "CDE", "EDAOF", "FEIKFOSAEI", "IAWRUGH" };
+	wordChain wc(inputString, 5, 2, 0, 0);
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
@@ -616,7 +621,7 @@ int test(int argc, char *argv[]) {
 初始化函数有三种：
 wordChain(int argc, char *argv[])    将参数以命令行参数的形式直接传入初始化函数，并计算得到相应结果
 wordChain(vector<string> inputString, int len, char h, char t, char type)   针对寻找最长单词链和最多字母单词链
-wordChain(vector<string> inputString, int len, int num, char h, char t, char type) 针对寻找定长单词链
+wordChain(vector<string> inputString, int len, int num, char h, char t) 针对寻找定长单词链
 *****若使用后两种方法进行初始化需调用者自己保证传入的inputstring中单词均为合法的大写单词*****
 vector<string> getChain() 得到w或c参数下的结果
 int getLen() 得到w或者c参数下的结果长度
