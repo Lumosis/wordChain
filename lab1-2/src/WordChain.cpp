@@ -474,14 +474,20 @@ public:
 			if (error_flag == false)	//这里的优先级是w，c，n，因此上面进行了对应的说明
 			{
 				if (w) {					//如果w不为空，则找最多单词数量的单词链
+					W_or_C_Type = true;
+					N_Type = false;
 					findLongest(h, t);
 					getResult(wd);
 				}
-				else if (c) { 				//找字母最多的单词链
+				else if (c) {              //找字母最多的单词链
+					W_or_C_Type = true;
+					N_Type = false;
 					findLargest(h, t);
 					getResultL(wd);
 				}
 				else {
+					W_or_C_Type = false;
+					N_Type = true;
 					num_count = 0;
 					findNum(wd,h, t, num);		//找的是num数据中的单词链
 					//PrintResultn(wd);
@@ -520,8 +526,27 @@ public:
 		}
 	}
 	wordChain(vector<string> inputString, int len, char h, char t, char type){//测试所用函数接口
+		//错误处理，包含非法字符，向量为空，向量中出现空串
+		if (inputString.size() == 0){
+			cout << "error : no string detected!" << endl;
+			return;
+		}
+		for (auto str : inputString){
+			if (str.size() == 0){
+				cout << "error : an empty string!" << endl;
+				return;
+			}
+			for (auto p : str){
+				if (!isalpha(p)){
+					cout << "error : illegal character!" << endl;
+					return ;
+				}
+			}
+		}
+		//设置此操作类型
 		W_or_C_Type = true;
 		N_Type = false;
+		//预处理得到矩阵
 		Words wd(inputString, len);
 		wd.getAlphaMatrix(alphaMatrix);
 		for (int m = 0; m<26; m++)
@@ -529,6 +554,7 @@ public:
 			for (int n = 0; n<26; n++)
 				copied_alpha[m][n] = alphaMatrix[m][n];
 		}
+		//计算最长链
 		wd.getWordSizeMatrix(wordSizeMatrix);
 		if (type == 'w'){
 			findLongest(h, t);
@@ -543,8 +569,27 @@ public:
 		}
 	}
 	wordChain(vector<string> inputString, int len, int num, char h, char t, char type){
+		//错误处理，包含非法字符，向量为空，向量中出现空串
+		if (inputString.size() == 0){
+			cout << "error : no string detected!" << endl;
+			return;
+		}
+		for (auto str : inputString){
+			if (str.size() == 0){
+				cout << "error : an empty string!" << endl;
+				return;
+			}
+			for (auto p : str){
+				if (!isalpha(p)){
+					cout << "error : illegal character!" << endl;
+					return;
+				}
+			}
+		}
+		//设置此操作类型
 		W_or_C_Type = false;
 		N_Type = true;
+		//预处理得到矩阵
 		Words wd(inputString, len);
 		wd.getAlphaMatrix(alphaMatrix);
 		for (int m = 0; m<26; m++)
@@ -554,7 +599,9 @@ public:
 		}
 		wd.getWordSizeMatrix(wordSizeMatrix);
 		num_count = 0;
+		//计算定长单词链
 		findNum(wd, h, t, num);		//找的是num数据中的单词链
+		//输出结果
 		ofstream ofile("solution.txt");
 		ifstream infile("solution_temp.txt");
 		ofile << num_count << endl;
@@ -664,7 +711,7 @@ int main(){
 使用方法:
 初始化函数有三种：
 wordChain(int argc, char *argv[])    将参数以命令行参数的形式直接传入初始化函数，并计算得到相应结果
-wordChain(vector<string> inputString, int len, char h, char t, char type)   针对寻找最长单词链和最多字母单词链
+wordChain(vector<string> inputString, int len, char h, char t, char type)   针对寻找最长单词链和最多字母单词链，参数type为操作类型
 wordChain(vector<string> inputString, int len, int num, char h, char t, char type) 针对寻找定长单词链
 *****若使用后两种方法进行初始化需调用者自己保证传入的inputstring中单词均为合法的大写单词*****
 vector<string> getChain() 得到w或c参数下的结果
