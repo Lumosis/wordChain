@@ -1,0 +1,141 @@
+# 计算英语单词链（Part2）
+
+## 接口的实现
+
+### 设计思路
+
+在上一次的实验中，已经基本实现了类的定义与使用。
+
+由于用户可能具有特殊的需求，因此需要定义新的接口以方便和其他模块之间交换数据。实验一中，我们已经定义了两个类：`wordChain`和`Words`，分别在`WordChain.cpp`和`Profix.cpp`中。其中`Words`类的主要功能实现了**文件的读取**、**字母矩阵、长度矩阵、单词矩阵的建立**、**单词总量的计算**、**重复单词的检测**、调试输出函数等多个**预处理**方法。
+
+`wordChain`类通过调用`Words`类中实现的方法，实现了不同的用户需求，计算了不同的单词链：
+
+* `findLongest`及下层方法`findLongestH`对应**计算单词最多单词链**需求。
+* `findLargest`及下层方法`findLargestH`对应**计算字母最多单词链**需求。
+* `findNum`及下层方法`findNumH`对应**计算出所有指定深度的单词链**，并在`getResultN`中递归输出。
+* 以上三种不同的方法都支持**给定首尾字母计算单词链**的功能。
+
+由于第一部分中，已经通过三个不同的方法来实现了不同的功能需求，因此只需要在`wordChain`类中新建方法，规定新的参数和接口，并在方法中分别调用上述三个方法，即可以实现实验需求。相当于为上述三个方法新建了不同的接口。
+
+### 实现内容及参数说明
+
+在上一次实验的代码的基础上，又进一步实现了两种接口，用于满足不同的用户需求：
+
+#### 第一类接口：
+
+```C++
+wordChain(vector<string> inputString, int len, char h, char t, char type)
+```
+
+第一种接口对应于计算**最多单词数量**和计算**最多字母数量**两种要求，即`-w`和`-c`两种需求，且支持**指定首尾字母**的输入方法。
+
+**参数说明如下：**
+
+- `vector<string> inputString`：输入的单词数组（通过C++`vector`来实现）
+- `int len`：输入的单词个数，即`inputString`的长度
+- `char h`：指定的单词链开始字母，缺省情况下ASCII码为0。
+- `char t`：指定的单词链结束字母，缺省情况下ASCII码为0。
+- `char type`：用于区分计算**最多单词数量**和计算**最多字母数量**两种要求：
+  - 当`type=='W'`时，执行**最多单词数量单词链**的计算。
+  - 当`type=='C'`时，执行**最多字母数量单词链**的计算。
+
+**具体实现如下**：
+
+```C++
+wordChain(vector<string> inputString, int len, char h, char t, char type)
+{
+	W_or_C_Type = true;
+	N_Type = false;
+	Words wd(inputString, len);
+	wd.getAlphaMatrix(alphaMatrix);
+	for (int m = 0; m<26; m++)
+	{
+		for (int n = 0; n<26; n++)
+			copied_alpha[m][n] = alphaMatrix[m][n];
+	}
+    /*******以下部分调用两个下层方法分别实现w功能和c功能*****/
+	wd.getWordSizeMatrix(wordSizeMatrix);
+	if (type == 'w'){
+		findLongest(h, t);
+		getResult(wd);
+	}
+	else if (type == 'c'){
+		findLargest(h, t);
+		getResultL(wd);
+	}
+	else{
+		cout << "parameter error!" << endl;
+	}
+}
+```
+
+
+
+#### 第二类接口：
+
+```C++
+wordChain(vector<string> inputString, int len, int num, char h, char t, char type)
+```
+
+第二类接口实现了计算**指定单词链长度的单词链数量及内容**的需求，即`-n`类需求，同样支持**指定首尾字母**的输入方法。
+
+**参数说明如下**：
+
+- `vector<string> inputString`：输入的单词数组（通过C++`vector`来实现）
+- `int len`：输入的单词个数，即`inputString`的长度
+- `int num`：指定的单词链的长度。
+- `char h`：指定的单词链开始字母，缺省情况下ASCII码为0。
+- `char t`：指定的单词链结束字母，缺省情况下ASCII码为0。
+- `char type`：用于保持重载函数的参数相同，无实际意义，默认设置为`'n'`。
+
+**具体实现如下**：
+
+由于实验一中已经基本实现了相关的按照模块的划分不同功能的需求，因此这一部分本质上相当于是为初始的`findNUM`函数重新定义了接口，所以该函数的主要实现的功能类似于`findNum`函数。
+
+```C++
+wordChain(vector<string> inputString, int len, int num, char h, char t, char type){
+		W_or_C_Type = false；
+		N_Type = true;
+		Words wd(inputString, len);
+		wd.getAlphaMatrix(alphaMatrix);
+		for (int m = 0; m<26; m++)
+		{
+			for (int n = 0; n<26; n++)
+				copied_alpha[m][n] = alphaMatrix[m][n];
+		}
+		wd.getWordSizeMatrix(wordSizeMatrix);
+		num_count = 0;
+		findNum(wd, h, t, num);		//找的是num数据中的单词链
+		ofstream ofile("solution.txt");
+		ifstream infile("solution_temp.txt");
+    	//此处temp文件中保存的是递归时输出的所有单词链，由于递归中无法得到总单词链个数
+    	//因此采用临时文件保存所有单词链，以便按照格式要求输出
+		ofile << num_count << endl;
+		ofile << "" << endl;
+		string line;
+		if (infile) 
+		{
+			while (getline(infile, line)) // line中不包括每行的换行符
+				ofile << line << endl;
+		}
+		else 
+			cout << "no such file" << endl;
+		ofile.close();
+		infile.close();
+		remove("solution_temp.txt");
+		cout << num_count << endl;
+	}
+```
+
+#### 原始接口：
+
+此外，仍然保留了第一部分中实现的`wordChain`方法：
+
+```C++
+wordChain(int argc, char *argv[])
+```
+
+读入命令行的参数，实现从读取文件到计算单词链的完整功能。
+
+
+
