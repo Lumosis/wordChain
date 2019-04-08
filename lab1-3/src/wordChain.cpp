@@ -574,6 +574,7 @@ CwordChain::CwordChain(vector<string> inputString, int len, char h, char t, char
 }
 
 CwordChain::CwordChain(vector<string> inputString, int len, int num, char h, char t, char type) {
+	remove("error.txt");
 	//错误处理，包含非法字符，向量为空，向量中出现空串
 	if (inputString.size() == 0) {
 		error(4);
@@ -655,6 +656,7 @@ vector<string> CwordChain::textPreprocess(string inputFilePath) {
 }
 
 void CwordChain::genChain(vector<string> inputString, char h, char t, char type) {//测试所用函数接口
+	remove("error.txt");
 	//错误处理，包含非法字符，向量为空，向量中出现空串
 	if (inputString.size() == 0) {
 		error(4);
