@@ -17,7 +17,6 @@ WORDCHAIN_API int fnwordChain(void)
 // 这是已导出类的构造函数。
 
 void CwordChain::error(int errorID) {
-	remove("error.txt");
 	ofstream ofile("error.txt");
 	switch (errorID) {
 	case 1:
@@ -410,7 +409,7 @@ CwordChain::CwordChain(int argc, char *argv[]) {    //读入不同的参数，�
 	}
 	//这里加上参数错误处理
 	//cout << n << "  "<< num << endl;
-
+	remove("error.txt");
 	/***在导入filePath之前，先检验该文件是否存在以及是否为空****/
 	ifstream check_file(filePath);
 	if (check_file)
@@ -633,6 +632,7 @@ CwordChain::CwordChain(vector<string> inputString, int len, int num, char h, cha
 
 vector<string> CwordChain::textPreprocess(string inputFilePath) {
 	bool file_error_flag = false;
+	remove("error.txt");
 	ifstream check_file(inputFilePath);
 	if (check_file)
 	{
