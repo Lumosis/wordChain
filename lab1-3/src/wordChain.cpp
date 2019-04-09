@@ -334,6 +334,7 @@ CwordChain::CwordChain(int argc, char *argv[]) {    //读入不同的参数，�
 	int num = 0;
 	int len;
 	int total_word_num = 0;
+	remove("error.txt");
 	string filePath(argv[argc - 1]);   //最后一个参数表示文件路径
 	for (int i = 1; i < argc - 1;) {
 		if (argv[i][0] != '-') { //如果第一个字符不是'-' 出错
@@ -409,7 +410,6 @@ CwordChain::CwordChain(int argc, char *argv[]) {    //读入不同的参数，�
 	}
 	//这里加上参数错误处理
 	//cout << n << "  "<< num << endl;
-	remove("error.txt");
 	/***在导入filePath之前，先检验该文件是否存在以及是否为空****/
 	ifstream check_file(filePath);
 	if (check_file)
@@ -526,6 +526,7 @@ CwordChain::CwordChain(int argc, char *argv[]) {    //读入不同的参数，�
 }
 
 CwordChain::CwordChain(vector<string> inputString, int len, char h, char t, char type) {//测试所用函数接口
+	remove("error.txt");
 	//错误处理，包含非法字符，向量为空，向量中出现空串
 	if (inputString.size() == 0) {
 		error(4);
@@ -578,6 +579,16 @@ CwordChain::CwordChain(vector<string> inputString, int len, int num, char h, cha
 	//错误处理，包含非法字符，向量为空，向量中出现空串
 	if (inputString.size() == 0) {
 		error(4);
+		return;
+	}
+	if (num == 0)
+	{
+		error(8);
+		return;
+	}
+	if (num < 0 )
+	{
+		error(7);
 		return;
 	}
 	for (auto str : inputString) {
@@ -656,7 +667,8 @@ vector<string> CwordChain::textPreprocess(string inputFilePath) {
 }
 
 void CwordChain::genChain(vector<string> inputString, char h, char t, char type) {//测试所用函数接口
-	remove("error.txt");
+	remove("error.txt");//此时两种情况：第一种，上层结果正确调用，到这里没有出问题，则该过程中如果有错误，必然在接下来的部分中出错。
+						//第二种，单独调用，此时需要单独判断是否有错误
 	//错误处理，包含非法字符，向量为空，向量中出现空串
 	if (inputString.size() == 0) {
 		error(4);
@@ -705,9 +717,20 @@ void CwordChain::genChain(vector<string> inputString, char h, char t, char type)
 }
 
 void CwordChain::genChainNum(vector<string> inputString, int num, char h, char t, char type) {
+	remove("error.txt");
 	//错误处理，包含非法字符，向量为空，向量中出现空串
 	if (inputString.size() == 0) {
 		error(4);
+		return;
+	}
+	if (num == 0)
+	{
+		error(8);
+		return;
+	}
+	if (num < 0 )
+	{
+		error(7);
 		return;
 	}
 	for (auto str : inputString) {
