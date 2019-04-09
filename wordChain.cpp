@@ -570,7 +570,7 @@ CwordChain::CwordChain(vector<string> inputString, int len, char h, char t, char
 		getResultL(wd);
 	}
 	else {
-		error(1);
+		error(1);g
 	}
 }
 
